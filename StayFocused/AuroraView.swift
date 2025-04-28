@@ -12,7 +12,7 @@ import SwiftUI
 import Combine
 import os.log
 
-let logger = Logger(subsystem: "AuroraView", category: "View")
+let awLogger = Logger(subsystem: "AuroraView", category: "View")
 
 @Observable
 class CircleAnimator: ObservableObject {
@@ -31,7 +31,6 @@ class CircleAnimator: ObservableObject {
     }
 
     func animate() {
-        objectWillChange.send()
         for i in 0..<circles.count {
             circles[i].position.x = CGFloat.random(in: 0 ... 1)
             circles[i].position.y = CGFloat.random(in: 0 ... 1)

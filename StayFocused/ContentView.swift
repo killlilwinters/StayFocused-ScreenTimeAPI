@@ -6,10 +6,20 @@
 //
 
 import SwiftUI
+import Combine
+import os.log
+
+private let cwLogger = Logger(subsystem: "ContentView", category: "View")
 
 struct ContentView: View {
     @State private var isAnimating = true
     @State private var isGray = false
+    
+    @State private var hour: String = "XX"
+    @State private var minute: String = "XX"
+    @State private var second: String = "XX"
+    
+    @State private var timer = Timer.publish(every: 1.0, on: .current, in: .common).autoconnect()
     
     var body: some View {
         // Set a timer to focus
@@ -29,15 +39,39 @@ struct ContentView: View {
                 blurRadius: 100,
                 circleDiameterRatio: 1.5
             )
-            Button(isAnimating ? "Stop" : "Start") {
+            VStack {
+                HStack {
+                    Text(hour)
+                        .redacted(reason: hour == "XX" ? .placeholder : [])
+                    Text(":")
+                    Text(minute)
+                        .redacted(reason: minute == "XX" ? .placeholder : [])
+                    Text(":")
+                    Text(second)
+                        .redacted(reason: second == "XX" ? .placeholder : [])
+                }
+                .font(.system(size: 60, weight: .thin, design: .default))
+                .foregroundStyle(.white)
+                .contentTransition(.numericText())
+                Button(isAnimating ? "Stop" : "Start") {
+                    withAnimation {
+                        isAnimating.toggle()
+                        isGray = !isAnimating
+                    }
+                }
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.capsule)
+                .foregroundStyle(.white)
+            }
+            .onReceive(timer) { _ in
+                guard isAnimating else { return }
+                let now = Date.now
                 withAnimation {
-                    isAnimating.toggle()
-                    isGray = !isAnimating
+                    hour = now.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)))
+                    minute = now.formatted(.dateTime.minute(.twoDigits))
+                    second = now.formatted(.dateTime.second(.twoDigits))
                 }
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.capsule)
-            .foregroundStyle(.white)
         }
     }
 }
