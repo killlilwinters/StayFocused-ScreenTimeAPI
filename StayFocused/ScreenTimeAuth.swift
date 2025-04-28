@@ -22,8 +22,15 @@ final class ScreenTimeAuth {
         }
     }
     
-    var status: AuthorizationStatus = .notDetermined
+    /// Used to check the last documented status of the authorization.
+    /// > Important: This value may not reliably tell the authorization status,
+    /// > make sure to call **authorize()** whenever appropriate to reset this value.
+    private(set) var status: AuthorizationStatus = .notDetermined
     
+    /// Used to check if the app requires authorization.
+    /// If it does - this property will throw a **.notAuthorized** error.
+    /// > Important: This value may not reliably tell the authorization status,
+    /// > make sure to call **authorize()** whenever appropriate to reset this value.
     var checkAuthorization: Void {
         get throws {
             if status == .notDetermined || status == .denied {
@@ -41,11 +48,14 @@ final class ScreenTimeAuth {
               self?.status = $0
           }
           .store(in: &cancellables)
+        
         ForegroundTracker.shared.addExecutionItem { [weak self] in
             try? self?.authorize()
         }
     }
 
+    /// Used to send the authorization request to the Screen Time API.
+    /// After calling this method - the properties of the class get updated to the latest authorization status.
     func authorize() throws(ScreenTimeAuth.Error) {
         Task {
             do {

@@ -8,11 +8,12 @@
 import Combine
 import UIKit
 
+/// **ForegroundTracker** allows to add some synchronous code to execute before an app enters the foreground state.
 final class ForegroundTracker {
     static let shared = ForegroundTracker()
     
-    private var executionItems: [() -> Void] = []
-    var cancellables: Set<AnyCancellable> = .init()
+    private var executionItems: Array<() -> Void>   = .init()
+    private var cancellables:   Set<AnyCancellable> = .init()
     
     private init() {
         
@@ -30,10 +31,13 @@ final class ForegroundTracker {
         }
     }
     
+    /// Adds a piece of code to the queue which will execute before the app enters foreground.
+    /// - Parameter item: Closure containing a synchronous code.
     func addExecutionItem(_ item: @escaping () -> Void) {
         executionItems.append(item)
     }
     
+    /// Removes all execution items from the queue.
     func removeAllExecutionItems() {
         executionItems.removeAll()
     }
