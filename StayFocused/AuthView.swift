@@ -23,7 +23,7 @@ struct AuthView: View {
                     .font(.system(size: 50, weight: .light))
                 Spacer()
                 Spacer()
-                Text("Screen time authorization is required to use this app.")
+                Text("Screen Time authorization is required to use this app.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                 Button("Authorize") {
