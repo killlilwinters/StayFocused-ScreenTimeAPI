@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import FamilyControls
 import os.log
 
 private let cwLogger = Logger(subsystem: "ContentView", category: "View")
@@ -27,6 +28,10 @@ struct ContentView: View {
             }
         }
     }
+    let activityRegistration: ActivityRegistration
+    @State private var appListStorage = try! AppListStorage()
+    private let immediateShield = ImmediateShield()
+    @State private var isFamilyPickerPresented = false
     
     @State private var isRunning = false
     @State private var isAnimatingBackground = true
@@ -44,13 +49,9 @@ struct ContentView: View {
     @State private var deadline: Date = .now
     
     var body: some View {
-        // Set a timer to focus
-        // Get Date.now()
-        // On each .onAppear() calculate the amount of time passed
-        // Use DeviceActivityMonitor to unlock apps upon the timer expiration
-        // Add a time selector for user to set how much time he does want to
-        // stay focused
         // Dynamic Island integration
+        // Refactor
+        // Come up with some UI for shield view
         ZStack {
             AuroraEffectView(
                 colors: [.purple, .yellow, .cyan],
@@ -71,7 +72,6 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal, 100)
-                    .colorScheme(.dark)
                     .onChange(of: pickerStyle) { _, nv in
                         nv == .defaultPicker
                         ? setFromDefaultPicker()
@@ -106,6 +106,20 @@ struct ContentView: View {
                 .buttonBorderShape(.capsule)
                 .foregroundStyle(.white)
                 
+                Button("Choose apps") {
+                    isFamilyPickerPresented.toggle()
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                
+            }
+            .colorScheme(.dark)
+            .familyActivityPicker(isPresented: $isFamilyPickerPresented, selection: $appListStorage.activitySelection)
+            .onChange(of: isRunning) {
+                isAnimatingBackground = !isRunning
+                
+                isRunning ? immediateShield.shield() : immediateShield.unshield()
+                isRunning ? registerActivity() : unregisterActivity()
             }
         }
     }
@@ -114,7 +128,6 @@ struct ContentView: View {
         DatePicker("Please enter a time", selection: $date, in: Date.now..., displayedComponents: .hourAndMinute)
             .labelsHidden()
             .datePickerStyle(.wheel)
-            .colorScheme(.dark)
             .frame(height: 100)
             .clipped()
     }
@@ -142,7 +155,25 @@ struct ContentView: View {
         }
         .padding(.horizontal, 100)
         .frame(height: 100)
-        .colorScheme(.dark)
+    }
+    
+    init(authManager: ScreenTimeAuth) {
+        self.activityRegistration = ActivityRegistration(authManager: authManager)
+    }
+    
+    private func registerActivity() {
+        let activity = RegisterActivity(
+            "TimerInitiatedActivity",
+            start: DateComponents.now,
+            end: DateComponents.init(from: deadline),
+            repeats: false
+        )
+        
+        try? activityRegistration.register(activity)
+    }
+    
+    private func unregisterActivity() {
+        try? activityRegistration.remove("TimerInitiatedActivity")
     }
     
     private func setFromDefaultPicker() {
@@ -178,5 +209,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(authManager: .init())
 }

@@ -22,7 +22,7 @@ struct StayFocusedApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(authManager: authManager)
                 .onChange(of: authManager.status) {
                     do {
                         try authManager.checkAuthorization
