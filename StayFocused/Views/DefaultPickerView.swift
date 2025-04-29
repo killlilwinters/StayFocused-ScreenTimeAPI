@@ -10,7 +10,7 @@ import SwiftUI
 struct DefaultPickerView: View {
     
     @Binding var deadline: Date
-    @State private var component: TimerDeadline = .init(hour: 0, minute: 0)
+    @State private var component: TimerDeadline = .init(hour: 0, minute: 15)
     
     var body: some View {
         
