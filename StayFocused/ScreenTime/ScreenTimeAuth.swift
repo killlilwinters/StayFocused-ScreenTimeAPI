@@ -10,7 +10,8 @@ import UIKit
 import Combine
 
 @Observable
-final class ScreenTimeAuth {
+final class ScreenTimeAuth: ScreenTimeAuthenticatable {
+    
     enum Error: LocalizedError {
         case notAuthorized, authorizationDenied
         

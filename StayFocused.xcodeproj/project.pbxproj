@@ -52,7 +52,7 @@
 		E92E211D2DC0EEBA00F962EE /* Exceptions for "StayFocused" folder in "TimerMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppListStorage.swift,
+				ScreenTime/AppListStorage.swift,
 			);
 			target = E92E21002DC0D96C00F962EE /* TimerMonitor */;
 		};
@@ -431,7 +431,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = StayFocused/StayFocusedDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = StayFocused/Entitlements/StayFocusedDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -473,7 +473,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = StayFocused/StayFocused.entitlements;
+				CODE_SIGN_ENTITLEMENTS = StayFocused/Entitlements/StayFocused.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XUYF93872P;
