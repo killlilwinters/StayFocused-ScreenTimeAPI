@@ -17,13 +17,18 @@ struct DatePickerView: View {
     
     var body: some View {
         
-        DatePicker("Please enter a time", selection: $date, in: Date.now..., displayedComponents: .hourAndMinute)
-            .labelsHidden()
-            .datePickerStyle(.wheel)
-            .frame(height: 100)
-            .clipped()
-            .onChange(of: date) { () in setFromDatePicker() }
-            .onAppear(perform: setFromDatePicker)
+        DatePicker(
+            "Please enter a time",
+            selection: $date,
+            in: Date.now.addingTimeInterval(15 * 60)...,
+            displayedComponents: .hourAndMinute
+        )
+        .labelsHidden()
+        .datePickerStyle(.wheel)
+        .frame(height: 100)
+        .clipped()
+        .onChange(of: date) { () in setFromDatePicker() }
+        .onAppear(perform: setFromDatePicker)
         
     }
     

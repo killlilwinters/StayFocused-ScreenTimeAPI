@@ -27,7 +27,7 @@ struct DefaultPickerView: View {
             VStack(spacing: 0) {
                 Text("Minute:")
                 Picker("Select an hour", selection: $component.minute) {
-                    ForEach(Array(0...59), id: \.self) {
+                    ForEach(Array(15...59), id: \.self) {
                         Text($0.description)
                     }
                 }
