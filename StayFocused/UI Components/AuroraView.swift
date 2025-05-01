@@ -100,8 +100,8 @@ struct AuroraEffectView: View {
          timerDuration:       TimeInterval = 1,
          animationSpeed:      Double = 4,
          blurRadius:          CGFloat = 15,
-         circleDiameterRatio: CGFloat = 0.8) {
-        
+         circleDiameterRatio: CGFloat = 0.8
+    ) {
         self.backgroundTint      = backgroundTint
         self._animator           = State(wrappedValue: CircleAnimator(colors: colors))
         self._isAnimating        = animating
