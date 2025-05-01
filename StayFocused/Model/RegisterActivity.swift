@@ -4,6 +4,9 @@
 //
 //  Created by Maks Winters on 29.04.2025.
 //
+// More on restrictions:
+// https://letvar.medium.com/time-after-screen-time-part-3-the-device-activity-monitor-extension-284da931391b
+//
 
 import Foundation
 import DeviceActivity

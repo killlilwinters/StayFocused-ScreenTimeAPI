@@ -25,13 +25,13 @@ final class ScreenTimeAuth: ScreenTimeAuthenticatable {
     
     /// Used to check the last documented status of the authorization.
     /// > Important: This value may not reliably tell the authorization status,
-    /// > make sure to call **authorize()** whenever appropriate to reset this value.
+    /// > make sure to call `authorize()` whenever appropriate to reset this value.
     private(set) var status: AuthorizationStatus = .notDetermined
     
     /// Used to check if the app requires authorization.
-    /// If it does - this property will throw a **.notAuthorized** error.
+    /// If it does - this property will throw a `.notAuthorized` error.
     /// > Important: This value may not reliably tell the authorization status,
-    /// > make sure to call **authorize()** whenever appropriate to reset this value.
+    /// > make sure to call `authorize()` whenever appropriate to reset this value.
     var checkAuthorization: Void {
         get throws {
             if status == .notDetermined || status == .denied {

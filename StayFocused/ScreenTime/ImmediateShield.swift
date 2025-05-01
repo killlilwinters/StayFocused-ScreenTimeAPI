@@ -11,12 +11,12 @@ import ManagedSettings
 struct ImmediateShield {
     private let store = ManagedSettingsStore()
     
-    /// This computed property returns a **Bool**, representing if there is any shielding active at the moment.
+    /// This computed property returns a `Bool`, representing if there is any shielding active at the moment.
     var isShielded: Bool {
         store.shield.applications != nil || store.shield.applicationCategories != nil
     }
     
-    /// Immediately shelds apps from **AppListStorage**.
+    /// Immediately shelds apps from `AppListStorage`.
     func shield() {
         let model = try? AppListStorage()
         guard let model else { return }

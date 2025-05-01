@@ -95,6 +95,13 @@
 			);
 			target = E92E21912DC164FE00F962EE /* ShieldActions */;
 		};
+		E931CB082DC3931400986542 /* Exceptions for "StayFocused" folder in "ShieldActions" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedConstants.swift,
+			);
+			target = E92E21912DC164FE00F962EE /* ShieldActions */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -126,6 +133,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				E92E211D2DC0EEBA00F962EE /* Exceptions for "StayFocused" folder in "TimerMonitor" target */,
+				E931CB082DC3931400986542 /* Exceptions for "StayFocused" folder in "ShieldActions" target */,
 			);
 			path = StayFocused;
 			sourceTree = "<group>";

@@ -13,12 +13,12 @@ import Foundation
 // to share a single storage "instance".
 let appGroupIdentifier: String? = "group." + (Bundle.main.bundleIdentifier ?? "")
 
-/// **AppListStorage** is responsible for saving user's **app** or **category** selection in a convenient way.
+/// `AppListStorage` is responsible for saving user's `app` or `category` selection in a convenient way.
 struct AppListStorage {
     private let identifier = "AppListStorage"
     private let userDefaults = UserDefaults(suiteName: appGroupIdentifier)!
     
-    /// Assigning to this prorepty calls internal methods to save assigned **FamilyActivitySelection**
+    /// Assigning to this prorepty calls internal methods to save assigned `FamilyActivitySelection`
     /// to the local storage.
     var activitySelection: FamilyActivitySelection {
         didSet {
@@ -26,7 +26,7 @@ struct AppListStorage {
         }
     }
     
-    /// Computed **get only** property to get a **Set** of **ApplicationToken** to discourage.
+    /// Computed `get only` property to get a `Set` of `ApplicationToken` to discourage.
     var appSelectionToDiscourage: Set<ApplicationToken> {
         var applicationTokens: Set<ApplicationToken> = .init()
         for item in activitySelection.applicationTokens {
@@ -35,7 +35,7 @@ struct AppListStorage {
         return applicationTokens
     }
     
-    /// Computed **get only** property to get a **Set** of **ActivityCategoryToken** to discourage.
+    /// Computed `get only` property to get a `Set` of `ActivityCategoryToken` to discourage.
     var categorySelectionToDiscourage: Set<ActivityCategoryToken> {
         var categoryTokens: Set<ActivityCategoryToken> = .init()
         for item in activitySelection.categoryTokens {
@@ -44,7 +44,7 @@ struct AppListStorage {
         return categoryTokens
     }
     
-    /// Initializes the **AppListStorage** struct and tries to decode last saved data.
+    /// Initializes the `AppListStorage` struct and tries to decode last saved data.
     init() throws {
         let data = userDefaults.data(forKey: identifier) ?? Data()
         let decoded = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data)

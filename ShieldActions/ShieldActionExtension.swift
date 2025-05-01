@@ -23,7 +23,9 @@ class ShieldActionExtension: ShieldActionDelegate {
         case .secondaryButtonPressed:
             store.shield.applications = nil
             store.shield.applicationCategories = nil
-            center.stopMonitoring([DeviceActivityName("TimerInitiatedActivity")])
+            // timerActivityIdentifier is located in
+            // Main App Targer -> SharedConstants
+            center.stopMonitoring([DeviceActivityName(timerActivityIdentifier)])
             
             completionHandler(.defer)
         @unknown default:
@@ -44,7 +46,9 @@ class ShieldActionExtension: ShieldActionDelegate {
         case .secondaryButtonPressed:
             store.shield.applications = nil
             store.shield.applicationCategories = nil
-            center.stopMonitoring([DeviceActivityName("TimerInitiatedActivity")])
+            // timerActivityIdentifier is located in
+            // Main App Targer -> SharedConstants
+            center.stopMonitoring([DeviceActivityName(timerActivityIdentifier)])
             
             completionHandler(.defer)
         @unknown default:

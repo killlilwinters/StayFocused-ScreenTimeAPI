@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-/// **ForegroundTracker** allows to add some synchronous code to execute before an app enters the foreground state.
+/// `ForegroundTracker` allows to add some synchronous code to execute before an app enters the foreground state.
 final class ForegroundTracker {
     static let shared = ForegroundTracker()
     
