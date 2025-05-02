@@ -40,11 +40,7 @@ struct TimerActivityWidgetLiveActivity: Widget {
                             .bold()
                     }
                     .foregroundStyle(.white)
-                    ActivityTimerView(
-                        attrs: context.attributes,
-                        state: context.state
-                    )
-                    .display
+                    ActivityTimerView(context: context)
                 }
                 .padding(
                     EdgeInsets(
@@ -62,25 +58,35 @@ struct TimerActivityWidgetLiveActivity: Widget {
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
                 // various regions, like leading/trailing/center/bottom
-                DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
-                }
                 DynamicIslandExpandedRegion(.bottom) {
-//                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    ZStack {
+                        RandomCircleUI(
+                            amount: 5,
+                            color: colors.randomElement()!
+                        )
+                        .padding(30)
+                        VStack {
+                            HStack {
+                                Text("Time remaining:")
+                                Spacer()
+                                Text("StayFocused")
+                                    .bold()
+                            }
+                            .foregroundStyle(.white)
+                            ActivityTimerView(context: context)
+                        }
+                    }
                 }
             } compactLeading: {
-                Text("L")
+                FCompactTimerView(context: context)
             } compactTrailing: {
-//                Text("T \(context.state.emoji)")
+                Text(timerInterval: context.state.deadlineRange)
+                    .frame(width: 55)
             } minimal: {
-//                Text(context.state.emoji)
+                FCompactTimerView(context: context)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+//            .widgetURL(URL(string: "http://www.apple.com"))
+//            .keylineTint(Color.red)
         }
     }
 }

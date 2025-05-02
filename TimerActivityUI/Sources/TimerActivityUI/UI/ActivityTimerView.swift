@@ -10,11 +10,11 @@ import WidgetKit
 import ActivityKit
 import TimerActivityContent
 
-public struct ActivityTimerView {
+public struct ActivityTimerView: View {
     var attrs: TimerActivityAttributes
     var state: TimerActivityAttributes.ContentState
     
-    public var display: some View {
+    public var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
             let height = proxy.size.height
@@ -42,10 +42,9 @@ public struct ActivityTimerView {
     }
     
     public init(
-        attrs: TimerActivityAttributes,
-        state: TimerActivityAttributes.ContentState
+        context: ActivityViewContext<TimerActivityAttributes>
     ) {
-        self.attrs = attrs
-        self.state = state
+        self.attrs = context.attributes
+        self.state = context.state
     }
 }
