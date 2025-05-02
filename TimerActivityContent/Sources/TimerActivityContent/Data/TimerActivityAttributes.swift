@@ -9,26 +9,16 @@ import Foundation
 import ActivityKit
 
 public struct TimerActivityAttributes: ActivityAttributes {
-    
-    // Fixed non-changing properties about your activity go here!
-    public let date: Date
-    
+    // Dynamic, changing properties go here
     public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        public var hour: Int
-        public var minute: Int
-        public var second: Int
+        public let deadlineRange: ClosedRange<Date>
         
-        public init(hour: Int, minute: Int, second: Int) {
-            self.hour = hour
-            self.minute = minute
-            self.second = second
+        public init(deadlineRange: ClosedRange<Date>) {
+            self.deadlineRange = deadlineRange
         }
-        
     }
     
-    public init(date: Date) {
-        self.date = date
-    }
+    // Fixed non-changing properties go here
     
+    public init() {}
 }
