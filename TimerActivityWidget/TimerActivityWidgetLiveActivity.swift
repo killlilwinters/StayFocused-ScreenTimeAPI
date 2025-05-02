@@ -26,6 +26,7 @@ struct TimerActivityWidgetLiveActivity: Widget {
             // Lock screen/banner UI goes here
             ZStack {
                 Rectangle()
+                    .fill(.black)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
                 RandomCircleUI(

@@ -24,6 +24,7 @@ final class ContentViewModel {
     }
     
     // Managers
+    let liveActivityManager: LiveActivityManager
     let activityRegistration: ActivityRegistration
     let immediateShield: ImmediateShield
     
@@ -44,6 +45,7 @@ final class ContentViewModel {
     init(authManager: ScreenTimeAuthenticatable) {
         
         // Managers
+        self.liveActivityManager     = LiveActivityManager()
         self.activityRegistration    = ActivityRegistration(authManager: authManager)
         self.immediateShield         = ImmediateShield()
         
@@ -78,7 +80,8 @@ final class ContentViewModel {
         isAnimatingBackground = !isRunning
         
         isRunning ? immediateShield.shield() : immediateShield.unshield()
-        isRunning ? registerActivity() : unregisterActivity()
+        isRunning ? registerActivity()       : unregisterActivity()
+        isRunning ? startLiveActivity()      : finishLiveActivity()
     }
     
     func toggleRunning() {
@@ -88,7 +91,7 @@ final class ContentViewModel {
         }
     }
     
-    func registerActivity() {
+    private func registerActivity() {
         let activity = RegisterActivity(
             timerActivityIdentifier,
             start: DateComponents.now,
@@ -99,8 +102,16 @@ final class ContentViewModel {
         try? activityRegistration.register(activity)
     }
     
-    func unregisterActivity() {
+    private func unregisterActivity() {
         try? activityRegistration.remove(timerActivityIdentifier)
+    }
+    
+    private func startLiveActivity() {
+        liveActivityManager.startActivity(deadline: deadline)
+    }
+    
+    private func finishLiveActivity() {
+        liveActivityManager.finishActivity()
     }
     
 }
