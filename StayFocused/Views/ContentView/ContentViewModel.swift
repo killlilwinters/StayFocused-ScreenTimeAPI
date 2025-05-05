@@ -65,6 +65,7 @@ final class ContentViewModel {
         
     }
     
+    #warning("Last session won't restore if it was set to < 15 mins.")
     func restoreLastSessionTimer() async {
         do {
             guard let date = try await activityRegistration.restoreLastSessionTimer() else { return }
