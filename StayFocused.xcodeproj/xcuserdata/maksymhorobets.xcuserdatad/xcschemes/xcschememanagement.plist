@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>ShieldActions.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>ShieldConfiguration.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>StayFocused.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>TimerActivityWidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>TimerMonitor.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>E92E21002DC0D96C00F962EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E92E21772DC15FBB00F962EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E92E21912DC164FE00F962EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E931CB302DC3EF8700986542</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E9FCD9372DBF811C00FD91E2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

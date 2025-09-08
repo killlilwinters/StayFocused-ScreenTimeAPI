@@ -5,11 +5,14 @@
 //  Created by Maks Winters on 01.05.2025.
 //
 
-import SwiftUI
 import os.log
+import SwiftUI
+import SwiftData
+import DeviceActivity
 
 private let cwmLogger = Logger(subsystem: "ContentView", category: "View")
 
+@MainActor
 @Observable
 final class ContentViewModel {
     enum PickerStyle: CaseIterable {
@@ -24,6 +27,7 @@ final class ContentViewModel {
     }
     
     // Managers
+    let storedActivityManager: StoredActivityManager
     let liveActivityManager: LiveActivityManager
     let activityRegistration: ActivityRegistration
     let immediateShield: ImmediateShield
@@ -42,11 +46,12 @@ final class ContentViewModel {
     // Final deadline value
     var deadline: Date
     
-    init(authManager: ScreenTimeAuthenticatable) {
+    init(authManager: ScreenTimeAuthenticatable, modelContainer: ModelContainer) {
         
         // Managers
+        self.storedActivityManager   = StoredActivityManager(modelContainer: modelContainer)
         self.liveActivityManager     = LiveActivityManager()
-        self.activityRegistration    = ActivityRegistration(authManager: authManager)
+        self.activityRegistration    = ActivityRegistration(authManager: authManager, storedActivityManager: storedActivityManager)
         self.immediateShield         = ImmediateShield()
         
         // Choosing apps
@@ -93,18 +98,30 @@ final class ContentViewModel {
     }
     
     private func registerActivity() {
-        let activity = RegisterActivity(
-            timerActivityIdentifier,
-            start: DateComponents.now,
-            end: DateComponents.init(from: deadline),
-            repeats: false
-        )
-        
-        try? activityRegistration.register(activity)
+        do {
+            let activity = StoredActivity(
+                activityID: UUID(),
+                activityType: .duration(actualEndDate: deadline)
+            )
+            
+            try storedActivityManager.createActivity(activity)
+            try activityRegistration.register(activity)
+            
+            try storedActivityManager.setActivityIsActive(for: activity, isActive: true)
+        } catch {
+            print(error)
+        }
     }
     
     private func unregisterActivity() {
-        try? activityRegistration.remove(timerActivityIdentifier)
+        guard let runningActivity = try? storedActivityManager.fetchActiveActivities().first else { return }
+        
+        do {
+            try storedActivityManager.removeActivity(runningActivity)
+            try activityRegistration.remove(runningActivity)
+        } catch {
+            print(error)
+        }
     }
     
     private func startLiveActivity() {

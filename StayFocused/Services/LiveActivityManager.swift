@@ -5,9 +5,9 @@
 //  Created by Maks Winters on 02.05.2025.
 //
 
+import SwiftUI
 import ActivityKit
 import TimerActivityContent
-import SwiftUI
 
 @Observable
 final class LiveActivityManager {

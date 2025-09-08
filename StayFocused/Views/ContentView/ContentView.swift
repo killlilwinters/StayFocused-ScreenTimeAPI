@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 import FamilyControls
 
 struct ContentView: View {
@@ -14,7 +15,6 @@ struct ContentView: View {
     @State private var vm: ContentViewModel
     
     var body: some View {
-        // Dynamic Island integration
         // Make it so that the app fetches running activities upon launch
         ZStack {
             AuroraEffectView(
@@ -85,12 +85,12 @@ struct ContentView: View {
         .padding(.horizontal, 100)
     }
     
-    init(authManager: ScreenTimeAuth) {
-        self.vm = ContentViewModel(authManager: authManager)
+    init(authManager: ScreenTimeAuth, modelContainer: ModelContainer) {
+        self.vm = ContentViewModel(authManager: authManager, modelContainer: modelContainer)
     }
     
 }
 
 #Preview {
-    ContentView(authManager: .init())
+    ContentView(authManager: .init(), modelContainer: PreviewHelper.inMemoryContainer)
 }
