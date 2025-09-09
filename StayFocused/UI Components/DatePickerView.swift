@@ -20,7 +20,7 @@ struct DatePickerView: View {
         DatePicker(
             "Please enter a time",
             selection: $date,
-            in: Date.now.addingTimeInterval(15 * 60)...,
+            in: Date.now.addingTimeInterval(1 * 60)...,
             displayedComponents: .hourAndMinute
         )
         .labelsHidden()

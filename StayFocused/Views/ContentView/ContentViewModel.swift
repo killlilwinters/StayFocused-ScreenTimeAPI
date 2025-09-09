@@ -43,6 +43,9 @@ final class ContentViewModel {
     // Picker selection
     var pickerStyle: PickerStyle
     
+    // Navigation
+    var isActivityListPresented: Bool
+    
     // Final deadline value
     var deadline: Date
     
@@ -65,41 +68,49 @@ final class ContentViewModel {
         // Picker selection
         self.pickerStyle             = .defaultPicker
         
+        // Navigation
+        self.isActivityListPresented = false
+        
         // Final deadline value
         self.deadline                = .now
         
     }
     
-    #warning("Last session won't restore if it was set to < 15 mins.")
-    func restoreLastSessionTimer() async {
-        do {
-            guard let date = try await activityRegistration.restoreLastSessionTimer() else { return }
-            deadline = date
-            isRunning = true
-            isAnimatingBackground = !isRunning
-        } catch {
-            cwmLogger.log("Dropped restoring due to: \(error.localizedDescription)")
+    func dismissLiveActivityIfNeeded() {
+        if !isRunning {
+            finishLiveActivity()
         }
     }
     
-    func handleStateChange() {
+    func restoreLastSessionTimer() async {
+        guard let date = try? await activityRegistration.restoreLastSessionTimer() else { return }
+        deadline = date
+        isRunning = true
+        isAnimatingBackground = !isRunning
+    }
+    
+    func startFocus() {
+        isRunning = true
         isAnimatingBackground = !isRunning
         
-        isRunning ? immediateShield.shield() : immediateShield.unshield()
-        isRunning ? registerActivity()       : unregisterActivity()
-        isRunning ? startLiveActivity()      : finishLiveActivity()
+        immediateShield.shield()
+        
+        registerActivity()
+        startLiveActivity()
     }
     
-    func toggleRunning() {
-        withAnimation {
-            isRunning.toggle()
-            isAnimatingBackground = !isRunning
-        }
+    func endFocus() {
+        isRunning = false
+        isAnimatingBackground = !isRunning
+        
+        unregisterActivity()
+        finishLiveActivity()
     }
     
     private func registerActivity() {
         do {
             let activity = StoredActivity(
+                name: "Temporary duration activity",
                 activityID: UUID(),
                 activityType: .duration(actualEndDate: deadline)
             )
@@ -117,6 +128,7 @@ final class ContentViewModel {
         guard let runningActivity = try? storedActivityManager.fetchActiveActivities().first else { return }
         
         do {
+            immediateShield.unshield()
             try storedActivityManager.removeActivity(runningActivity)
             try activityRegistration.remove(runningActivity)
         } catch {

@@ -11,7 +11,7 @@ import SwiftData
 import FamilyControls
 
 struct ContentView: View {
-    
+    @Environment(\.scenePhase) var scenePhase
     @State private var vm: ContentViewModel
     
     var body: some View {
@@ -50,7 +50,11 @@ struct ContentView: View {
                 Spacer()
                 
                 Button(vm.isRunning ? "Stop" : "Start") {
-                    vm.toggleRunning()
+                    if vm.isRunning {
+                        vm.endFocus()
+                    } else {
+                        vm.startFocus()
+                    }
                 }
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.capsule)
@@ -69,10 +73,50 @@ struct ContentView: View {
                 
             }
             .colorScheme(.dark)
-            .onChange(of: vm.isRunning) { vm.handleStateChange() }
             .onAppear {
                 Task { await vm.restoreLastSessionTimer() }
             }
+            .onChange(of: scenePhase) {
+                if case .active = scenePhase {
+                    vm.dismissLiveActivityIfNeeded()
+                }
+            }
+        }
+        .navigationTitle("StayFocused")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { toolbarItems }
+        .overlay {
+            if vm.isActivityListPresented {
+                StoredActivitiesView(storedActivityManager: vm.storedActivityManager)
+                    .transition(.opacity)
+            }
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var toolbarItems: some ToolbarContent {
+        if vm.isActivityListPresented {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    withAnimation {
+#warning("Coming soon")
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                withAnimation {
+                    vm.isActivityListPresented.toggle()
+                }
+            } label: {
+                Image(systemName: "hourglass")
+            }
+            .buttonStyle(.plain)
         }
     }
     
@@ -92,5 +136,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(authManager: .init(), modelContainer: PreviewHelper.inMemoryContainer)
+    NavigationStack {
+        ContentView(authManager: .init(), modelContainer: PreviewHelper.inMemoryContainer)
+    }
 }

@@ -36,21 +36,24 @@ struct StayFocusedApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(authManager: authManager, modelContainer: container)
-                .onChange(of: authManager.status) {
-                    do {
-                        try authManager.checkAuthorization
-                        showOverlay = false
-                    } catch {
-                        showOverlay = true
-                    }
+            NavigationStack {
+                ContentView(authManager: authManager, modelContainer: container)
+                    .preferredColorScheme(.dark)
+            }
+            .onChange(of: authManager.status) {
+                do {
+                    try authManager.checkAuthorization
+                    showOverlay = false
+                } catch {
+                    showOverlay = true
                 }
-                .overlay {
-                    if showOverlay {
-                        AuthView(authManager: authManager)
-                            .transition(.blurReplace)
-                    }
+            }
+            .overlay {
+                if showOverlay {
+                    AuthView(authManager: authManager)
+                        .transition(.blurReplace)
                 }
+            }
         }
     }
 }

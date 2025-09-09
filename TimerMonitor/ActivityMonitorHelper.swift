@@ -11,8 +11,8 @@ import DeviceActivity
 import ManagedSettings
 
 // Marking it nonisolated to make sure nobody wants to add @MainActor here.
-nonisolated struct ActivityMonitorHelper {
-    private let container: ModelContainer = {
+nonisolated final class ActivityMonitorHelper {
+    private static let container: ModelContainer = {
         let schema = Schema([StoredActivity.self])
         let config = ModelConfiguration(groupContainer: .identifier(SharedConstants.groupIdentifier))
         
@@ -21,17 +21,15 @@ nonisolated struct ActivityMonitorHelper {
     }()
     
     private let store = ManagedSettingsStore()
+    private let storedActivityManager = StoredActivityManager(modelContainer: ActivityMonitorHelper.container)
     
     func intervalDidStart(for activity: DeviceActivityName) async {
         guard let uuid = UUID(uuidString: activity.rawValue) else { return }
-        let storedActivityManager = StoredActivityManager(modelContainer: container)
         
         guard let storedActivity = try? storedActivityManager.fetchActivities(for: uuid) else { return }
         
         switch storedActivity.activityType {
         case .duration(let actualEndDate):
-            try? storedActivityManager.setActivityIsActive(for: storedActivity, isActive: false)
-            
             let offsetSeconds = Int(actualEndDate.timeIntervalSinceNow)
             
             await offset(seconds: offsetSeconds)
@@ -40,6 +38,7 @@ nonisolated struct ActivityMonitorHelper {
             store.shield.applicationCategories = nil
             
             DeviceActivityCenter().stopMonitoring([activity])
+            try? storedActivityManager.removeActivity(storedActivity)
         case .scheduled(let startTime, let endTime, let contentToBlock):
             #warning("Coming soon...")
         }
