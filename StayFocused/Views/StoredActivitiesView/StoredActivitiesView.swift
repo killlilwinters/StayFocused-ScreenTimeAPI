@@ -29,7 +29,13 @@ struct StoredActivitiesView: View {
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(vm.activities) { activity in
-                            ActivityCellView(activity: activity)
+                            ActivityCellView(
+                                activity: activity,
+                                isScheduled: .init(
+                                    get: { vm.isScheduled(for: activity) },
+                                    set: { vm.setIsScheduled(for: activity, isScheduled: $0) }
+                                )
+                            )
                         }
                         .padding(1)
                     }
@@ -39,16 +45,21 @@ struct StoredActivitiesView: View {
         .onAppear(perform: vm.fetchActivities)
     }
     
-    init(storedActivityManager: StoredActivityManager) {
-        self.vm = StoredActivitiesViewModel(storedActivityManager: storedActivityManager)
+    init(
+        storedActivityManager: StoredActivityManager,
+        registrationCenter: ActivityRegistrationCenter,
+    ) {
+        self.vm = StoredActivitiesViewModel(
+            storedActivityManager: storedActivityManager,
+            registrationCenter: registrationCenter
+        )
     }
     
 }
 
 #Preview {
     StoredActivitiesView(
-        storedActivityManager: StoredActivityManager(
-            modelContainer: PreviewHelper.inMemoryContainer
-        )
+        storedActivityManager: PreviewHelper.mockStoredActivityManager,
+        registrationCenter: PreviewHelper.mockActivityRegistrationCenter
     )
 }

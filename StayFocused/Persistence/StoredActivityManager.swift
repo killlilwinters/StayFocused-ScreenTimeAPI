@@ -55,6 +55,7 @@ nonisolated final class StoredActivityManager {
     
     func removeActivity(_ activity: StoredActivity) throws {
         modelContext.delete(activity)
+        try save()
     }
     
     func eraseAllData() throws {

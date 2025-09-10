@@ -87,8 +87,11 @@ struct ContentView: View {
         .toolbar { toolbarItems }
         .overlay {
             if vm.isActivityListPresented {
-                StoredActivitiesView(storedActivityManager: vm.storedActivityManager)
-                    .transition(.opacity)
+                StoredActivitiesView(
+                    storedActivityManager: vm.storedActivityManager,
+                    registrationCenter: vm.registrationCenter
+                )
+                .transition(.opacity)
             }
         }
     }

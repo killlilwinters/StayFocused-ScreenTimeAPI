@@ -29,7 +29,7 @@ final class ContentViewModel {
     // Managers
     let storedActivityManager: StoredActivityManager
     let liveActivityManager: LiveActivityManager
-    let activityRegistration: ActivityRegistration
+    let registrationCenter: ActivityRegistrationCenter
     let immediateShield: ImmediateShield
     
     // Choosing apps
@@ -54,7 +54,7 @@ final class ContentViewModel {
         // Managers
         self.storedActivityManager   = StoredActivityManager(modelContainer: modelContainer)
         self.liveActivityManager     = LiveActivityManager()
-        self.activityRegistration    = ActivityRegistration(authManager: authManager, storedActivityManager: storedActivityManager)
+        self.registrationCenter    = ActivityRegistrationCenter(authManager: authManager, storedActivityManager: storedActivityManager)
         self.immediateShield         = ImmediateShield()
         
         // Choosing apps
@@ -83,7 +83,7 @@ final class ContentViewModel {
     }
     
     func restoreLastSessionTimer() async {
-        guard let date = try? await activityRegistration.restoreLastSessionTimer() else { return }
+        guard let date = try? await registrationCenter.restoreLastSessionTimer() else { return }
         deadline = date
         isRunning = true
         isAnimatingBackground = !isRunning
@@ -116,7 +116,7 @@ final class ContentViewModel {
             )
             
             try storedActivityManager.createActivity(activity)
-            try activityRegistration.register(activity)
+            try registrationCenter.register(activity)
             
             try storedActivityManager.setActivityIsActive(for: activity, isActive: true)
         } catch {
@@ -130,7 +130,7 @@ final class ContentViewModel {
         do {
             immediateShield.unshield()
             try storedActivityManager.removeActivity(runningActivity)
-            try activityRegistration.remove(runningActivity)
+            try registrationCenter.remove(runningActivity)
         } catch {
             print(error)
         }

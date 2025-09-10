@@ -8,6 +8,7 @@
 import SwiftData
 import Foundation
 
+@MainActor
 enum PreviewHelper {
     static let inMemoryContainer: ModelContainer = {
         let schema = Schema([StoredActivity.self])
@@ -15,5 +16,13 @@ enum PreviewHelper {
         let container = try! ModelContainer(for: schema, configurations: config)
         
         return container
+    }()
+    
+    static let mockStoredActivityManager: StoredActivityManager = {
+        StoredActivityManager(modelContainer: inMemoryContainer)
+    }()
+    
+    static let mockActivityRegistrationCenter: ActivityRegistrationCenter = {
+        ActivityRegistrationCenter(authManager: ScreenTimeAuth(), storedActivityManager: mockStoredActivityManager)
     }()
 }

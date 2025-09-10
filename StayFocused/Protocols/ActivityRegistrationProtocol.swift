@@ -8,6 +8,7 @@
 import Foundation
 
 /// Defines the interface for registering, removing, and querying device activities.
+@MainActor
 protocol ActivityRegistrationProtocol {
     
     /// Registers an activity into the DeviceActivityCenter.

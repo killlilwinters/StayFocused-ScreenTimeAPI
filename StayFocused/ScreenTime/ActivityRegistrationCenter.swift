@@ -11,7 +11,7 @@ import Foundation
 
 /// A `class` used for registering activities to the `DeviceActivity` framework.
 @MainActor
-final class ActivityRegistration: ActivityRegistrationProtocol {
+final class ActivityRegistrationCenter: ActivityRegistrationProtocol {
     enum Error: LocalizedError {
         case notFound
         case expired
@@ -40,6 +40,11 @@ final class ActivityRegistration: ActivityRegistrationProtocol {
         self.storedActivityManager = storedActivityManager
     }
     
+    func isRegistered(_ activity: StoredActivity) -> Bool {
+        center
+            .activities
+            .contains(DeviceActivityName(activity.activityID.uuidString))
+    }
     
     func register(_ activity: StoredActivity) throws {
         try authManager.checkAuthorization
@@ -58,10 +63,17 @@ final class ActivityRegistration: ActivityRegistrationProtocol {
             let endAsComponents = DateComponents.init(from: actualEndDate)
             let workaroundEndTime = endAsComponents.adding(seconds: 15 * 60)
             
-            schedule = DeviceActivitySchedule(intervalStart: endAsComponents, intervalEnd: workaroundEndTime, repeats: false)
-        case .scheduled(let startTime, let endTime, let contentToBlock):
-            #warning("Coming soon...")
-            schedule = DeviceActivitySchedule(intervalStart: .init(), intervalEnd: .init(), repeats: false)
+            schedule = DeviceActivitySchedule(
+                intervalStart: endAsComponents,
+                intervalEnd: workaroundEndTime,
+                repeats: false
+            )
+        case .scheduled(let startTime, let endTime, _):
+            schedule = DeviceActivitySchedule(
+                intervalStart: startTime.dateComponents,
+                intervalEnd: endTime.dateComponents,
+                repeats: true
+            )
         }
         
         try center.startMonitoring(deviceActivityName, during: schedule)

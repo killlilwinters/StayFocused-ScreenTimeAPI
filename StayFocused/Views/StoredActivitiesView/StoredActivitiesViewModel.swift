@@ -13,10 +13,31 @@ final class StoredActivitiesViewModel {
     
     var activities: Array<StoredActivity> = .init()
     
-    let storedActivityManager: StoredActivityManager
+    private let storedActivityManager: StoredActivityManager
+    private let registrationCenter: ActivityRegistrationCenter
     
-    init(storedActivityManager: StoredActivityManager) {
+    init(
+        storedActivityManager: StoredActivityManager,
+        registrationCenter: ActivityRegistrationCenter
+    ) {
         self.storedActivityManager = storedActivityManager
+        self.registrationCenter = registrationCenter
+    }
+    
+    func isScheduled(for storedActivity: StoredActivity) -> Bool {
+        registrationCenter.isRegistered(storedActivity)
+    }
+    
+    func setIsScheduled(for storedActivity: StoredActivity, isScheduled: Bool) {
+        do {
+            if isScheduled {
+                try registrationCenter.register(storedActivity)
+            } else {
+                try registrationCenter.remove(storedActivity)
+            }
+        } catch {
+            print(error)
+        }
     }
     
     func fetchActivities() {

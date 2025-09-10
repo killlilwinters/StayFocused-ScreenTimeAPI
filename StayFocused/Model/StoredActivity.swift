@@ -15,6 +15,13 @@ final class StoredActivity {
         case duration(actualEndDate: Date)
         case scheduled(startTime: TimeOfDay, endTime: TimeOfDay, contentToBlock: FamilyActivitySelection)
         
+        var iconSystemName: String {
+            switch self {
+            case .duration: "timer"
+            case .scheduled: "hourglass"
+            }
+        }
+        
         var description: String {
             switch self {
             case .duration(let actualEndDate):
