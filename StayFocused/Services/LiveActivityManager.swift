@@ -17,6 +17,8 @@ final class LiveActivityManager {
     func startActivity(deadline: Date) {
         guard activityAuthorizationInfo.areActivitiesEnabled else { return }
         
+        guard deadline > Date.now else { return }
+        
         let range: ClosedRange<Date> = Date.now...deadline
         
         let attributes = TimerActivityAttributes()

@@ -50,10 +50,12 @@ struct ContentView: View {
                 Spacer()
                 
                 Button(vm.isRunning ? "Stop" : "Start") {
-                    if vm.isRunning {
-                        vm.endFocus()
-                    } else {
-                        vm.startFocus()
+                    withAnimation {
+                        if vm.isRunning {
+                            vm.endFocus()
+                        } else {
+                            vm.startFocus()
+                        }
                     }
                 }
                 .buttonStyle(.bordered)
@@ -78,7 +80,9 @@ struct ContentView: View {
             }
             .onChange(of: scenePhase) {
                 if case .active = scenePhase {
-                    vm.dismissLiveActivityIfNeeded()
+                    withAnimation {
+                        vm.resetState()
+                    }
                 }
             }
         }

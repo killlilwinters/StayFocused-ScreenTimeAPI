@@ -76,9 +76,11 @@ final class ContentViewModel {
         
     }
     
-    func dismissLiveActivityIfNeeded() {
+    func resetState() {
         if !isRunning {
             finishLiveActivity()
+            self.isRunning = false
+            self.isAnimatingBackground = true
         }
     }
     
