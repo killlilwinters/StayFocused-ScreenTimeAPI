@@ -15,6 +15,7 @@ struct ScheduleCreationView: View {
     
     var body: some View {
         VStack(spacing: 20) {
+            
             Text("Create schedule").fontWeight(.light)
                 .padding(.bottom)
             
@@ -28,6 +29,7 @@ struct ScheduleCreationView: View {
                 Text("Pick activities")
             }
             .buttonStyle(.bordered)
+            .foregroundStyle(.primary)
             
             HStack {
                 DatePicker(
@@ -58,13 +60,16 @@ struct ScheduleCreationView: View {
                     onFinishCreating(nil)
                 }
             }
+            .foregroundStyle(.primary)
         }
         .padding()
+        .buttonBorderShape(.capsule)
         .conditionalBackground()
         .familyActivityPicker(
             isPresented: $vm.isActivitySelectionPresented,
             selection: $vm.activitySelection
         )
+        .colorScheme(.light)
     }
     
     init(onFinishCreating: @escaping (StoredActivity?) -> Void) {
@@ -78,13 +83,12 @@ fileprivate extension View {
     @ViewBuilder
     func conditionalBackground() -> some View {
         let rect = RoundedRectangle(cornerRadius: 40)
+        
         if #available(iOS 26, *) {
             self.glassEffect(in: rect).padding()
         } else {
             self.background {
-                rect
-                    .foregroundStyle(.ultraThinMaterial)
-                    .padding()
+                rect.padding(.horizontal).foregroundStyle(.ultraThinMaterial)
             }
         }
     }

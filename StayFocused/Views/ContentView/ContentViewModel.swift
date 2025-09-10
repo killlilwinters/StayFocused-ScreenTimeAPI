@@ -45,6 +45,7 @@ final class ContentViewModel {
     
     // Navigation
     var isActivityListPresented: Bool
+    var isCreationPresented: Bool
     
     // Final deadline value
     var deadline: Date
@@ -70,10 +71,20 @@ final class ContentViewModel {
         
         // Navigation
         self.isActivityListPresented = false
+        self.isCreationPresented     = false
         
         // Final deadline value
         self.deadline                = .now
         
+    }
+    
+    func handleActivityCreation(_ activity: StoredActivity?) {
+        if let activity {
+            try? storedActivityManager.createActivity(activity)
+            isCreationPresented = false
+        } else {
+            isCreationPresented = false
+        }
     }
     
     func resetState() {

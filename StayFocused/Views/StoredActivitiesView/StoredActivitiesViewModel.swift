@@ -42,7 +42,12 @@ final class StoredActivitiesViewModel {
     
     func fetchActivities() {
         do {
-            activities = try storedActivityManager.fetchActivities()
+            // Cannot sort an enum with associated values using SortDescriptor in SwiftData.FetchDescriptor
+            activities = try storedActivityManager
+                .fetchActivities()
+                .sorted(
+                    using: SortDescriptor(\.activityType, order: .reverse)
+                )
         } catch {
             print(error)
         }

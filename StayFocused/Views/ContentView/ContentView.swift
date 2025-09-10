@@ -91,11 +91,23 @@ struct ContentView: View {
         .toolbar { toolbarItems }
         .overlay {
             if vm.isActivityListPresented {
-                StoredActivitiesView(
-                    storedActivityManager: vm.storedActivityManager,
-                    registrationCenter: vm.registrationCenter
-                )
-                .transition(.opacity)
+                ZStack {
+                    StoredActivitiesView(
+                        storedActivityManager: vm.storedActivityManager,
+                        registrationCenter: vm.registrationCenter
+                    )
+                    .transition(.opacity)
+                    .disabled(vm.isCreationPresented)
+                    
+                    if vm.isCreationPresented {
+                        ScheduleCreationView { activity in
+                            withAnimation {
+                                vm.handleActivityCreation(activity)
+                            }
+                        }
+                        .transition(.blurReplace)
+                    }
+                }
             }
         }
     }
@@ -106,7 +118,7 @@ struct ContentView: View {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
                     withAnimation {
-#warning("Coming soon")
+                        vm.isCreationPresented.toggle()
                     }
                 } label: {
                     Image(systemName: "plus")

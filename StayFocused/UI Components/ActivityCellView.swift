@@ -18,10 +18,10 @@ struct ActivityCellView: View {
         } else {
             baseView
                 .padding(.horizontal)
-            .background {
-                RoundedRectangle(cornerRadius: 50)
-                    .foregroundStyle(.ultraThinMaterial)
-            }
+                .background {
+                    RoundedRectangle(cornerRadius: 50)
+                        .foregroundStyle(.ultraThinMaterial)
+                }
         }
     }
     
@@ -43,6 +43,7 @@ struct ActivityCellView: View {
                     }
                 }())
         }
+        .frame(maxWidth: .infinity)
         .padding()
     }
 }

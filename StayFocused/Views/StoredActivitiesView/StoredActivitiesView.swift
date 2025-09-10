@@ -39,6 +39,7 @@ struct StoredActivitiesView: View {
                         }
                         .padding(1)
                     }
+                    .padding(.horizontal)
                 }
             }
         }

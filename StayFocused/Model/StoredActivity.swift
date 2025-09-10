@@ -11,7 +11,7 @@ import FamilyControls
 
 @Model
 final class StoredActivity {
-    enum ActivityType: Codable {
+    enum ActivityType: Codable, Comparable {
         case duration(actualEndDate: Date)
         case scheduled(startTime: TimeOfDay, endTime: TimeOfDay, contentToBlock: FamilyActivitySelection)
         
@@ -31,6 +31,11 @@ final class StoredActivity {
                 return "Scheduled block. Start: \(startTime.description) End: \(endTime.description)"
             }
         }
+        
+        static func < (lhs: StoredActivity.ActivityType, rhs: StoredActivity.ActivityType) -> Bool {
+            if case .duration = rhs { true } else { false }
+        }
+        
     }
     
     var name: String
