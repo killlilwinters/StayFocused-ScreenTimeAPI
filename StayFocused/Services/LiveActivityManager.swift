@@ -5,9 +5,9 @@
 //  Created by Maks Winters on 02.05.2025.
 //
 
+import SwiftUI
 import ActivityKit
 import TimerActivityContent
-import SwiftUI
 
 @Observable
 final class LiveActivityManager {
@@ -17,12 +17,14 @@ final class LiveActivityManager {
     func startActivity(deadline: Date) {
         guard activityAuthorizationInfo.areActivitiesEnabled else { return }
         
+        guard deadline > Date.now else { return }
+        
         let range: ClosedRange<Date> = Date.now...deadline
         
         let attributes = TimerActivityAttributes()
         let state = TimerActivityAttributes.ContentState(deadlineRange: range)
         
-        let content = ActivityContent(state: state, staleDate: nil)
+        let content = ActivityContent(state: state, staleDate: deadline)
         
         currentActivity = try? Activity
             .request(
@@ -31,7 +33,6 @@ final class LiveActivityManager {
                 pushType: nil
             )
     }
-    
     
     func finishActivity() {
         guard let currentActivity else { return }

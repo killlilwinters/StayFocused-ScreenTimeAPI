@@ -7,14 +7,14 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 import FamilyControls
 
 struct ContentView: View {
-    
+    @Environment(\.scenePhase) var scenePhase
     @State private var vm: ContentViewModel
     
     var body: some View {
-        // Dynamic Island integration
         // Make it so that the app fetches running activities upon launch
         ZStack {
             AuroraEffectView(
@@ -50,7 +50,13 @@ struct ContentView: View {
                 Spacer()
                 
                 Button(vm.isRunning ? "Stop" : "Start") {
-                    vm.toggleRunning()
+                    withAnimation {
+                        if vm.isRunning {
+                            vm.endFocus()
+                        } else {
+                            vm.startFocus()
+                        }
+                    }
                 }
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.capsule)
@@ -69,10 +75,68 @@ struct ContentView: View {
                 
             }
             .colorScheme(.dark)
-            .onChange(of: vm.isRunning) { vm.handleStateChange() }
             .onAppear {
                 Task { await vm.restoreLastSessionTimer() }
             }
+            .onChange(of: scenePhase) {
+                if case .active = scenePhase {
+                    withAnimation {
+                        vm.resetState()
+                    }
+                }
+            }
+        }
+        .navigationTitle("StayFocused")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { toolbarItems }
+        .overlay {
+            if vm.isActivityListPresented {
+                ZStack {
+                    StoredActivitiesView(
+                        storedActivityManager: vm.storedActivityManager,
+                        registrationCenter: vm.registrationCenter
+                    )
+                    .transition(.opacity)
+                    .disabled(vm.isCreationPresented)
+                    .blur(radius: vm.isCreationPresented ? 10 : 0)
+                    
+                    if vm.isCreationPresented {
+                        ScheduleCreationView { activity in
+                            withAnimation {
+                                vm.handleActivityCreation(activity)
+                            }
+                        }
+                        .transition(.blurReplace)
+                    }
+                }
+            }
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var toolbarItems: some ToolbarContent {
+        if vm.isActivityListPresented {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    withAnimation {
+                        vm.isCreationPresented.toggle()
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                withAnimation {
+                    vm.isActivityListPresented.toggle()
+                }
+            } label: {
+                Image(systemName: "hourglass")
+            }
+            .buttonStyle(.plain)
         }
     }
     
@@ -85,12 +149,14 @@ struct ContentView: View {
         .padding(.horizontal, 100)
     }
     
-    init(authManager: ScreenTimeAuth) {
-        self.vm = ContentViewModel(authManager: authManager)
+    init(authManager: ScreenTimeAuth, modelContainer: ModelContainer) {
+        self.vm = ContentViewModel(authManager: authManager, modelContainer: modelContainer)
     }
     
 }
 
 #Preview {
-    ContentView(authManager: .init())
+    NavigationStack {
+        ContentView(authManager: .init(), modelContainer: PreviewHelper.inMemoryContainer)
+    }
 }

@@ -45,6 +45,9 @@ struct TimerView: View {
         .font(.system(size: 60, weight: .thin, design: .default))
         .foregroundStyle(.white)
         .contentTransition(.numericText())
+        .onChange(of: isAnimating) {
+            if isAnimating { startTimer() }
+        }
         .onReceive(timer) { _ in
             handleTimerTick()
         }
@@ -55,12 +58,32 @@ struct TimerView: View {
             withAnimation { isAnimating = false }
             return
         }
-        guard isAnimating else { return }
+        
+        guard isAnimating else {
+            stopTimer()
+            resetValues()
+            return
+        }
+        
         withAnimation {
             hour = Int(remainingSeconds) / 3600
             minute = (Int(remainingSeconds) % 3600) / 60
             second = Int(remainingSeconds) % 60
         }
+    }
+    
+    private func stopTimer() {
+        timer.upstream.connect().cancel()
+    }
+    
+    private func startTimer() {
+        timer = timer.upstream.autoconnect()
+    }
+    
+    private func resetValues() {
+        hour = -1
+        minute = -1
+        second = -1
     }
     
 }

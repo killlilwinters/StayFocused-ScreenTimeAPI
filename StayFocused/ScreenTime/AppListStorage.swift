@@ -9,14 +9,10 @@ import FamilyControls
 import ManagedSettings
 import Foundation
 
-// Global variable seen from the DeviceActivityMonitor module as well
-// to share a single storage "instance".
-let appGroupIdentifier: String? = "group." + (Bundle.main.bundleIdentifier ?? "")
-
 /// `AppListStorage` is responsible for saving user's `app` or `category` selection in a convenient way.
-struct AppListStorage {
+final class AppListStorage {
     private let identifier = "AppListStorage"
-    private let userDefaults = UserDefaults(suiteName: appGroupIdentifier)!
+    private let userDefaults = UserDefaults(suiteName: SharedConstants.groupIdentifier)!
     
     /// Assigning to this prorepty calls internal methods to save assigned `FamilyActivitySelection`
     /// to the local storage.

@@ -19,13 +19,19 @@ public struct FCompactTimerView: View {
             label: { Text("") },
             currentValueLabel: { Text("") }
         )
-            .progressViewStyle(CircularProgressViewStyle())
-            .frame(width: 20, height: 20)
-            .overlay {
-                Text("F")
-                    .bold()
-                    .foregroundStyle(.white)
-            }
+        .progressViewStyle(CircularProgressViewStyle())
+        .frame(width: 20, height: 20)
+        .overlay {
+            Image(systemName: "hourglass")
+                .font(.caption)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.blue, .yellow],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+        }
     }
     
     public init(

@@ -59,32 +59,45 @@ struct TimerActivityWidgetLiveActivity: Widget {
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
                 // various regions, like leading/trailing/center/bottom
+                DynamicIslandExpandedRegion(.leading) {
+                    Text("Time left:")
+                        .scaleEffect(0.9)
+                        .padding(1)
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    Text("StayFocused")
+                        .bold()
+                        .scaleEffect(0.9)
+                        .padding(1)
+                }
                 DynamicIslandExpandedRegion(.bottom) {
                     ZStack {
                         RandomCircleUI(
                             amount: 5,
                             color: colors.randomElement()!
                         )
-                        .padding(30)
-                        VStack {
-                            HStack {
-                                Text("Time remaining:")
-                                Spacer()
-                                Text("StayFocused")
-                                    .bold()
-                            }
-                            .foregroundStyle(.white)
-                            ActivityTimerView(context: context)
-                        }
+                        .frame(height: 50)
+                        ActivityTimerView(context: context)
                     }
+                    .padding()
                 }
             } compactLeading: {
-                FCompactTimerView(context: context)
+                Image(systemName: "hourglass")
+                    .foregroundStyle(.white)
+                    .frame(width: 20, height: 20)
             } compactTrailing: {
-                Text(timerInterval: context.state.deadlineRange)
-                    .frame(width: 55)
+                ProgressView(
+                    timerInterval: context.state.deadlineRange,
+                    label: { Text("Time left") },
+                    currentValueLabel: { Text(String()) }
+                )
+                .tint(.green)
+                .progressViewStyle(CircularProgressViewStyle())
+                .frame(width: 20, height: 20)
+                .labelsHidden()
             } minimal: {
                 FCompactTimerView(context: context)
+                    .tint(.green)
             }
 //            .widgetURL(URL(string: "http://www.apple.com"))
 //            .keylineTint(Color.red)

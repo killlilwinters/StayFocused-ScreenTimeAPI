@@ -10,9 +10,6 @@
 
 import SwiftUI
 import Combine
-import os.log
-
-let awLogger = Logger(subsystem: "AuroraView", category: "View")
 
 @Observable
 class CircleAnimator: ObservableObject {

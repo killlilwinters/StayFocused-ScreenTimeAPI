@@ -5,11 +5,14 @@
 //  Created by Maks Winters on 01.05.2025.
 //
 
-import SwiftUI
 import os.log
+import SwiftUI
+import SwiftData
+import DeviceActivity
 
 private let cwmLogger = Logger(subsystem: "ContentView", category: "View")
 
+@MainActor
 @Observable
 final class ContentViewModel {
     enum PickerStyle: CaseIterable {
@@ -24,8 +27,9 @@ final class ContentViewModel {
     }
     
     // Managers
+    let storedActivityManager: StoredActivityManager
     let liveActivityManager: LiveActivityManager
-    let activityRegistration: ActivityRegistration
+    let registrationCenter: ActivityRegistrationCenter
     let immediateShield: ImmediateShield
     
     // Choosing apps
@@ -39,14 +43,19 @@ final class ContentViewModel {
     // Picker selection
     var pickerStyle: PickerStyle
     
+    // Navigation
+    var isActivityListPresented: Bool
+    var isCreationPresented: Bool
+    
     // Final deadline value
     var deadline: Date
     
-    init(authManager: ScreenTimeAuthenticatable) {
+    init(authManager: ScreenTimeAuthenticatable, modelContainer: ModelContainer) {
         
         // Managers
+        self.storedActivityManager   = StoredActivityManager(modelContainer: modelContainer)
         self.liveActivityManager     = LiveActivityManager()
-        self.activityRegistration    = ActivityRegistration(authManager: authManager)
+        self.registrationCenter    = ActivityRegistrationCenter(authManager: authManager, storedActivityManager: storedActivityManager)
         self.immediateShield         = ImmediateShield()
         
         // Choosing apps
@@ -60,51 +69,84 @@ final class ContentViewModel {
         // Picker selection
         self.pickerStyle             = .defaultPicker
         
+        // Navigation
+        self.isActivityListPresented = false
+        self.isCreationPresented     = false
+        
         // Final deadline value
         self.deadline                = .now
         
     }
     
-    #warning("Last session won't restore if it was set to < 15 mins.")
-    func restoreLastSessionTimer() async {
-        do {
-            guard let date = try await activityRegistration.restoreLastSessionTimer() else { return }
-            deadline = date
-            isRunning = true
-            isAnimatingBackground = !isRunning
-        } catch {
-            cwmLogger.log("Dropped restoring due to: \(error.localizedDescription)")
+    func handleActivityCreation(_ activity: StoredActivity?) {
+        if let activity {
+            try? storedActivityManager.createActivity(activity)
+            isCreationPresented = false
+        } else {
+            isCreationPresented = false
         }
     }
     
-    func handleStateChange() {
+    func resetState() {
+        if !isRunning {
+            finishLiveActivity()
+            self.isRunning = false
+            self.isAnimatingBackground = true
+        }
+    }
+    
+    func restoreLastSessionTimer() async {
+        guard let date = try? await registrationCenter.restoreLastSessionTimer() else { return }
+        deadline = date
+        isRunning = true
+        isAnimatingBackground = !isRunning
+    }
+    
+    func startFocus() {
+        isRunning = true
         isAnimatingBackground = !isRunning
         
-        isRunning ? immediateShield.shield() : immediateShield.unshield()
-        isRunning ? registerActivity()       : unregisterActivity()
-        isRunning ? startLiveActivity()      : finishLiveActivity()
+        immediateShield.shield(with: appListStorage)
+        
+        registerActivity()
+        startLiveActivity()
     }
     
-    func toggleRunning() {
-        withAnimation {
-            isRunning.toggle()
-            isAnimatingBackground = !isRunning
-        }
+    func endFocus() {
+        isRunning = false
+        isAnimatingBackground = !isRunning
+        
+        unregisterActivity()
+        finishLiveActivity()
     }
     
     private func registerActivity() {
-        let activity = RegisterActivity(
-            timerActivityIdentifier,
-            start: DateComponents.now,
-            end: DateComponents.init(from: deadline),
-            repeats: false
-        )
-        
-        try? activityRegistration.register(activity)
+        do {
+            let activity = StoredActivity(
+                name: "Temporary duration activity",
+                activityID: UUID(),
+                activityType: .duration(actualEndDate: deadline)
+            )
+            
+            try storedActivityManager.createActivity(activity)
+            try registrationCenter.register(activity)
+            
+            try storedActivityManager.setActivityIsActive(for: activity, isActive: true)
+        } catch {
+            print(error)
+        }
     }
     
     private func unregisterActivity() {
-        try? activityRegistration.remove(timerActivityIdentifier)
+        guard let runningActivity = try? storedActivityManager.fetchActiveActivities().first else { return }
+        
+        do {
+            immediateShield.unshield()
+            try storedActivityManager.removeActivity(runningActivity)
+            try registrationCenter.remove(runningActivity)
+        } catch {
+            print(error)
+        }
     }
     
     private func startLiveActivity() {

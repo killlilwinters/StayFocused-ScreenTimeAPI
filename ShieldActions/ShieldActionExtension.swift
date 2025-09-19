@@ -17,20 +17,7 @@ class ShieldActionExtension: ShieldActionDelegate {
     
     override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
         // Handle the action as needed.
-        switch action {
-        case .primaryButtonPressed:
-            completionHandler(.close)
-        case .secondaryButtonPressed:
-            store.shield.applications = nil
-            store.shield.applicationCategories = nil
-            // timerActivityIdentifier is located in
-            // Main App Targer -> SharedConstants
-            center.stopMonitoring([DeviceActivityName(timerActivityIdentifier)])
-            
-            completionHandler(.defer)
-        @unknown default:
-            fatalError()
-        }
+        handle(action: action, completionHandler: completionHandler)
     }
     
     override func handle(action: ShieldAction, for webDomain: WebDomainToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
@@ -40,19 +27,21 @@ class ShieldActionExtension: ShieldActionDelegate {
     
     override func handle(action: ShieldAction, for category: ActivityCategoryToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
         // Handle the action as needed.
+        handle(action: action, completionHandler: completionHandler)
+    }
+    
+    func handle(action: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
         switch action {
         case .primaryButtonPressed:
             completionHandler(.close)
         case .secondaryButtonPressed:
             store.shield.applications = nil
             store.shield.applicationCategories = nil
-            // timerActivityIdentifier is located in
-            // Main App Targer -> SharedConstants
-            center.stopMonitoring([DeviceActivityName(timerActivityIdentifier)])
             
             completionHandler(.defer)
         @unknown default:
             fatalError()
         }
     }
+    
 }
