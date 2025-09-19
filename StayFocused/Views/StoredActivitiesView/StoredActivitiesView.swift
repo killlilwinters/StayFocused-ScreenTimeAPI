@@ -36,6 +36,11 @@ struct StoredActivitiesView: View {
                                     set: { vm.setIsScheduled(for: activity, isScheduled: $0) }
                                 )
                             )
+                            .contextMenu {
+                                Button("Delete schedule", role: .destructive) {
+                                    vm.deleteActivity(activity)
+                                }
+                            }
                         }
                         .padding(1)
                     }
@@ -44,6 +49,12 @@ struct StoredActivitiesView: View {
             }
         }
         .onAppear(perform: vm.fetchActivities)
+        .alert(
+            "Something went wrong...",
+            isPresented: vm.isErrorPresented,
+            actions: { /* Default OK button */ },
+            message: { Text(vm.error?.localizedDescription ?? "Unknown error") }
+        )
     }
     
     init(

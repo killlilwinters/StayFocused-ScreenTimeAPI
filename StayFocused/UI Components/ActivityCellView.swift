@@ -14,7 +14,7 @@ struct ActivityCellView: View {
     var body: some View {
         if #available(iOS 26, *) {
             baseView
-                .glassEffect(.clear.interactive())
+                .glassEffect(.clear)
         } else {
             baseView
                 .padding(.horizontal)

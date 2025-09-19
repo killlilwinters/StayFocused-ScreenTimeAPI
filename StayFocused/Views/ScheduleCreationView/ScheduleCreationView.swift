@@ -46,6 +46,9 @@ struct ScheduleCreationView: View {
             }
             .datePickerStyle(.compact)
             .labelsHidden()
+            .onAppear {
+                UIDatePicker.appearance().minuteInterval = 15
+            }
             
             VStack {
                 Button {
