@@ -24,7 +24,7 @@ final class LiveActivityManager {
         let attributes = TimerActivityAttributes()
         let state = TimerActivityAttributes.ContentState(deadlineRange: range)
         
-        let content = ActivityContent(state: state, staleDate: nil)
+        let content = ActivityContent(state: state, staleDate: deadline)
         
         currentActivity = try? Activity
             .request(
@@ -33,7 +33,6 @@ final class LiveActivityManager {
                 pushType: nil
             )
     }
-    
     
     func finishActivity() {
         guard let currentActivity else { return }
