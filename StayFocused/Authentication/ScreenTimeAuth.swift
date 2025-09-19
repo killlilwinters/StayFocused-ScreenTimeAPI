@@ -41,6 +41,7 @@ final class ScreenTimeAuth: ScreenTimeAuthenticatable {
     }
     
     private var cancellables: Set<AnyCancellable> = .init()
+    private var foregroundTracker: Task<Void, Never>?
     
     init() {
         AuthorizationCenter.shared
@@ -50,8 +51,13 @@ final class ScreenTimeAuth: ScreenTimeAuthenticatable {
           }
           .store(in: &cancellables)
         
-        ForegroundTracker.shared.addExecutionItem { [weak self] in
-            try? self?.authorize()
+        
+        self.foregroundTracker = Task.detached { [weak self] in
+            for await _ in NotificationCenter.default.notifications(
+                named: UIApplication.willEnterForegroundNotification
+            ) {
+                try? self?.authorize()
+            }
         }
     }
 

@@ -33,7 +33,9 @@ final class StoredActivitiesViewModel {
         self.registrationCenter = registrationCenter
         
         self.updatesTask = Task.detached { [weak self] in
-            for await _ in NotificationCenter.default.notifications(named: .NSPersistentStoreRemoteChange) {
+            for await _ in NotificationCenter.default.notifications(
+                named: .NSPersistentStoreRemoteChange
+            ) {
                 await self?.fetchActivities()
             }
         }
