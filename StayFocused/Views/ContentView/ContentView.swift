@@ -98,6 +98,7 @@ struct ContentView: View {
                     )
                     .transition(.opacity)
                     .disabled(vm.isCreationPresented)
+                    .blur(radius: vm.isCreationPresented ? 10 : 0)
                     
                     if vm.isCreationPresented {
                         ScheduleCreationView { activity in
