@@ -106,7 +106,7 @@ final class ContentViewModel {
         isRunning = true
         isAnimatingBackground = !isRunning
         
-        immediateShield.shield()
+        immediateShield.shield(with: appListStorage)
         
         registerActivity()
         startLiveActivity()

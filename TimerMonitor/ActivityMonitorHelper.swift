@@ -7,6 +7,7 @@
 
 import SwiftData
 import Foundation
+import FamilyControls
 import DeviceActivity
 import ManagedSettings
 
@@ -20,7 +21,7 @@ nonisolated final class ActivityMonitorHelper {
         return try! ModelContainer(for: schema, configurations: config)
     }()
     
-    private let store = ManagedSettingsStore()
+    private let shield = ImmediateShield()
     private let storedActivityManager = StoredActivityManager(modelContainer: ActivityMonitorHelper.container)
     
     func intervalDidStart(for activity: DeviceActivityName) async {
@@ -34,18 +35,18 @@ nonisolated final class ActivityMonitorHelper {
             
             await offset(seconds: offsetSeconds)
             
-            store.shield.applications = nil
-            store.shield.applicationCategories = nil
-            
-            DeviceActivityCenter().stopMonitoring([activity])
+            unblock()
+            stopMonitoring(activity: activity)
             try? storedActivityManager.removeActivity(storedActivity)
-        case .scheduled(let startTime, let endTime, let contentToBlock):
-            #warning("Coming soon...")
+            
+        case .scheduled(_, _, let contentToBlock):
+            block(content: contentToBlock)
         }
     }
     
     func intervalDidEnd(for activity: DeviceActivityName) {
-        #warning("Coming soon...")
+        // Only scheduled blocks will come to this point so just unblock everything
+        unblock()
     }
     
     private func offset(seconds: Int) async {
@@ -57,6 +58,18 @@ nonisolated final class ActivityMonitorHelper {
             try? await Task.sleep(for: .seconds(1), tolerance: .milliseconds(100))
             counter += 1
         }
+    }
+    
+    private func unblock() {
+        shield.unshield()
+    }
+    
+    private func block(content: FamilyActivitySelection) {
+        shield.shield(with: content)
+    }
+    
+    private func stopMonitoring(activity: DeviceActivityName) {
+        DeviceActivityCenter().stopMonitoring([activity])
     }
     
 }

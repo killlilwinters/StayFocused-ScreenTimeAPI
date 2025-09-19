@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FamilyControls
 import ManagedSettings
 
 struct ImmediateShield {
@@ -17,15 +18,19 @@ struct ImmediateShield {
     }
     
     /// Immediately shelds apps from `AppListStorage`.
-    func shield() {
-        let model = try? AppListStorage()
-        guard let model else { return }
-        
+    func shield(with model: AppListStorage) {
         let applications = model.appSelectionToDiscourage
         let categories = model.categorySelectionToDiscourage
         
         store.shield.applications = applications.isEmpty ? nil : applications
+        store.shield.applicationCategories = categories.isEmpty ? nil : .specific(categories)
+    }
+    
+    func shield(with selection: FamilyActivitySelection) {
+        let applications = selection.applicationTokens
+        let categories = selection.categoryTokens
         
+        store.shield.applications = applications.isEmpty ? nil : applications
         store.shield.applicationCategories = categories.isEmpty ? nil : .specific(categories)
     }
     
@@ -33,11 +38,6 @@ struct ImmediateShield {
     func unshield() {
         store.shield.applications = nil
         store.shield.applicationCategories = nil
-    }
-    
-    /// Toggles between sheild and unshield based on the current state.
-    func toggle() {
-        isShielded ? unshield() : shield()
     }
     
 }

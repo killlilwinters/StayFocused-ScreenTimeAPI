@@ -102,6 +102,7 @@
 				Model/TimeComponents.swift,
 				Persistence/StoredActivityManager.swift,
 				ScreenTime/AppListStorage.swift,
+				ScreenTime/ImmediateShield.swift,
 				SharedConstants.swift,
 			);
 			target = E92E21002DC0D96C00F962EE /* TimerMonitor */;

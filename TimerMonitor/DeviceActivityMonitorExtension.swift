@@ -25,12 +25,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
-    }
-    
-    override func intervalWillEndWarning(for activity: DeviceActivityName) {
-        super.intervalWillEndWarning(for: activity)
         
-        // Handle the warning before the interval ends.
+        helper.intervalDidEnd(for: activity)
     }
-    
 }
