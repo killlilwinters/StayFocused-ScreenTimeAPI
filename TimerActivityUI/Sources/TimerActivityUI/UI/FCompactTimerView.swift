@@ -23,7 +23,14 @@ public struct FCompactTimerView: View {
         .frame(width: 20, height: 20)
         .overlay {
             Image(systemName: "hourglass")
-                .foregroundStyle(.white)
+                .font(.caption)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.blue, .yellow],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
         }
     }
     

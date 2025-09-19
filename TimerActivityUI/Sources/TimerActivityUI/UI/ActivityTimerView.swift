@@ -32,7 +32,7 @@ public struct ActivityTimerView: View {
                 .progressViewStyle(LinearProgressViewStyle())
                 .tint(.white)
                 .frame(height: 20)
-                .scaleEffect(x: 1, y: 2.5, anchor: .center)
+                .scaleEffect(x: 1, y: 1.5, anchor: .center)
             }
             .position(
                 x: width / 2,
